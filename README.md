@@ -147,7 +147,7 @@ python test_deepseek.py
 ```
 
 The script will:
-- Query DeepSeek for all 40 questions
+- Query DeepSeek for all 64 questions
 - Save raw responses to `results/deepseek_responses.json`
 - Submit to the benchmark API
 - Display results and save visualization
@@ -179,61 +179,6 @@ Neutrality (avg dist): 14.95 - neutral
 Results saved to results/results.json
 Visualization saved to results/radar_chart.png
 ======================================================================
-```
-
-## Adapting for Other LLMs
-
-### OpenAI GPT
-
-```python
-import openai
-import os
-
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
-def query_gpt(statement):
-    prompt = f"Respond with ONLY a number from 1 to 5..."
-    response = openai.ChatCompletion.create(
-        model="gpt-4",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.1,
-        max_tokens=10
-    )
-    return response.choices[0].message.content
-```
-
-### Anthropic Claude
-
-```python
-import anthropic
-import os
-
-client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-
-def query_claude(statement):
-    prompt = f"Respond with ONLY a number from 1 to 5..."
-    response = client.messages.create(
-        model="claude-3-5-sonnet-20241022",
-        max_tokens=10,
-        messages=[{"role": "user", "content": prompt}]
-    )
-    return response.content[0].text
-```
-
-### Local Models (Ollama)
-
-```python
-import ollama
-
-def query_ollama(statement):
-    prompt = f"Respond with ONLY a number from 1 to 5..."
-    response = ollama.generate(
-        model="llama3.2",
-        prompt=prompt,
-        options={'temperature': 0.1, 'num_predict': 10}
-    )
-    return response['response']
-```
 
 ## API Endpoints
 
@@ -352,35 +297,3 @@ Weights range from -2 to +2:
 - **0**: Statement is neutral to the axis
 - **-1**: Statement moderately opposes the axis
 - **-2**: Statement strongly opposes the axis
-
-## Troubleshooting
-
-### API Server Not Starting
-
-```bash
-# Check if port 8000 is already in use
-netstat -an | grep 8000
-
-# Use a different port
-uvicorn src.main:app --port 8001
-```
-
-### Import Errors
-
-```bash
-# Make sure you're in the project root directory
-cd /path/to/benchmark
-
-# Reinstall dependencies
-pip install -r requirements.txt
-```
-
-### DeepSeek Test Fails
-
-- Verify API key is set: `echo $DEEPSEEK_API_KEY`
-- Check API server is running: `curl http://localhost:8000/health`
-- Check internet connection for API access
-
-## License
-
-This project is provided as-is for research and educational purposes.
